@@ -97,8 +97,13 @@ provider "aws" {
         instance_type = "t2.micro"
         subnet_id = aws_subnet.pub-subnet-1.id
         associate_public_ip_address = true
-        key_name = "sshkey1"
+        key_name = "deployer-key"
         vpc_security_group_ids = [aws_security_group.aws-sg.id]
+    }
+    
+    resource "aws_key_pair" "deployer" {
+        key_name   = "kplatest"
+
     }
 
     resource "aws_security_group" "aws-sg"{
@@ -116,3 +121,8 @@ provider "aws" {
     cidr_blocks      = ["0.0.0.0/0"]
     ip
     }
+    resource "aws_key_pair" "deployer" {
+  key_name   = "deployer-key"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDSd/lGuLgdVF78logPv1HbohY1udHzO5dwLHHVMigiO2vt+nsSNNrqNbioKbtsPwlGfP3Dj6Y/2WFVLY+ktV3aHHmTB0y5+qOZRdDLHzEcd9zZAC8pp7U91kh/mhjTlWb2P1ArWPiWYFOeNNhGDjXPEWDyQsebhLN9A04B5QSqfC5HD4bjcZulEPbTo7zXtQcPFB24/ZDIlHm2soN9S30JwRQ151ORksTmUzZTwz9zffhQ31SQVyeI5aTcLjcOuGfwhyUQpoz2AsIBdCxCNMhsDtQH/0hsbKYtbcJr304xisV61qDFIPuznXCbvRD1BINev/rVHpBaE3yP5I8GIUEygZtREVQt0TpybOtJuT2EIKSXDHfL6VxDggWM3T9xrIRVvzP6o+I+AkfF7TG6edhy01r6bPwb6qKCeJ5n8l7t5eVD/H7JJRY+XsvUa/guFwVD2pEiWcmWE7hw452cgHB5uBJvybRGAah+UTDqlKtT6eQY4CyC/JeoMLwAV85CiRM= shyamgupta@work-laptop"
+}
+
