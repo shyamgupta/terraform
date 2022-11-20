@@ -88,5 +88,26 @@ provider "aws" {
         subnet_id = aws_subnet.pri-subnet-2.id
         route_table_id = aws_route_table.private_route_table.id
     }
+
+    # Create an EC2 instance in public subnet
+    resource "aws_instance" "my_ec2"{
+        ami = "ami-0149b2da6ceec4bb0"
+        instance_type = "t2.micro"
+        subnet_id = aws_subnet.pub_subnet_1.id
+        associate_public_ip_address = true
+        key_name = "sshkey1"
+        vpc_security_group_ids = [aws_security_group.aws-sg.id]
+        depends_on = [aws_security_group.aws-sg.id]
+    }
+
+    resource "aws_security_group" "aws-sg"{
+        vpc_id = aws_vpc.my_vpc.id
+        ingress{
+            from_port = 22
+            protocol = tcp
+            to_port = 22
+            cidr_block = "0.0.0.0/0"
+        }
+    }
 }   
 
