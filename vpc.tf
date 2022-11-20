@@ -11,29 +11,31 @@ provider "aws" {
   # Configuration options
 	region = "us-east-1"
     
+}   
+
     # Create VPC
     resource "aws_vpc" "my_vpc"{
-        cidr_block = "10.0.0.0/8"
+        cidr_block = "10.0.0.0/16"
     }
     
     # Create Public Subnets
     resource "aws_subnet" "pub-subnet-1"{
         vpc_id = aws_vpc.my_vpc.id
-        cidr_block = "10.0.1.0/16"
+        cidr_block = "10.0.1.0/24"
     }
     resource "aws_subnet" "pub-subnet-2"{
         vpc_id = aws_vpc.my_vpc.id
-        cidr_block = "10.0.2.0/16"
+        cidr_block = "10.0.2.0/24"
     }
 
     # Create Private Subnets
     resource "aws_subnet" "pri-subnet-1"{
         vpc_id = aws_vpc.my_vpc.id
-        cidr_block = "10.0.3.0/16"
+        cidr_block = "10.0.3.0/24"
     }
     resource "aws_subnet" "pri-subnet-2"{
         vpc_id = aws_vpc.my_vpc.id
-        cidr_block = "10.0.4.0/16"
+        cidr_block = "10.0.4.0/24"
     }
     
     # Create Internet Gateway
@@ -58,16 +60,16 @@ provider "aws" {
         vpc_id = aws_vpc.my_vpc.id
         route{
             cidr_block = "0.0.0.0/0"
-            gateway_id = aws_internet_gateway.igw
+            gateway_id = aws_internet_gateway.igw.id
         }
     }
     
-    route "aws_route_table_association" "public1"{
+    resource  "aws_route_table_association" "public1"{
         subnet_id = aws_subnet.pub-subnet-1.id
         route_table_id = aws_route_table.public_route_table.id
     }
     
-    route "aws_route_table_association" "public2"{
+    resource "aws_route_table_association" "public2"{
         subnet_id = aws_subnet.pub-subnet-2.id
         route_table_id = aws_route_table.public_route_table.id
     }
@@ -93,21 +95,18 @@ provider "aws" {
     resource "aws_instance" "my_ec2"{
         ami = "ami-0149b2da6ceec4bb0"
         instance_type = "t2.micro"
-        subnet_id = aws_subnet.pub_subnet_1.id
+        subnet_id = aws_subnet.pub-subnet-1.id
         associate_public_ip_address = true
         key_name = "sshkey1"
         vpc_security_group_ids = [aws_security_group.aws-sg.id]
-        depends_on = [aws_security_group.aws-sg.id]
     }
 
     resource "aws_security_group" "aws-sg"{
         vpc_id = aws_vpc.my_vpc.id
         ingress{
             from_port = 22
-            protocol = tcp
+            protocol = "tcp"
             to_port = 22
-            cidr_block = "0.0.0.0/0"
+            cidr_blocks = ["0.0.0.0/0"]
         }
     }
-}   
-
