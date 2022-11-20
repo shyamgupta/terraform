@@ -5,6 +5,11 @@ terraform {
       version = "4.40.0"
     }
   }
+  backend "s3" {
+bucket = "tf-bucket-shyam"
+key = "files/tf.state"
+region = "us-east-1"
+}
 }
 
 provider "aws" {
